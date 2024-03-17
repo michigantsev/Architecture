@@ -1,0 +1,6 @@
+@WaterTourismManager_HostAddress = http://localhost:5111
+
+GET {{WaterTourismManager_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
