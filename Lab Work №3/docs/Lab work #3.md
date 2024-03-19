@@ -5,4 +5,38 @@
 В результате сообщение об успешном создании или недостаточном балансе  
 ![image](https://github.com/michigantsev/Architecture/assets/63182310/2b0c3acd-4145-4b24-8402-5e4715764480)  
 Модель БД  
-![image](https://github.com/michigantsev/Architecture/assets/63182310/21c58351-3fef-4c97-9d22-15087f1996c9)
+![image](https://github.com/michigantsev/Architecture/assets/63182310/21c58351-3fef-4c97-9d22-15087f1996c9)  
+KISS -- использование простых методов там, где это возможно:  
+```
+        [HttpGet(Name = "get-clients-list")]
+        public ActionResult<List<ClientDataDto>> GetClientsList()
+        {
+            return Ok(_context.Clients.ToList());
+        }
+```  
+DRY -- использование маппера, вместо повторяещегося присваивания полей:  
+```
+private readonly IMapper _mapper;
+
+ [HttpPost(Name = "create-new-client")]
+ public ActionResult CreateNewClient([FromBody] ClientDataDto clientData)
+ {
+     var resultData = _mapper.Map<ClientDataDto, ClientData>(clientData);
+     _context.Clients.Add(resultData);
+     _context.SaveChanges();
+     return Ok();
+ }
+
+ [HttpPut(Name = "update-client")]
+ public ActionResult UpdateClient(Guid clientId, [FromBody] ClientDataDto clientData)
+ {
+     var client = _context.Clients.FirstOrDefault(e => e.ClientId == clientId);
+     if (client == null)
+     {
+         return NotFound();
+     }
+     client = _mapper.Map<ClientDataDto, ClientData>(clientData);   
+     _context.SaveChanges();
+     return Ok();
+ }
+```
