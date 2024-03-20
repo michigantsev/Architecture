@@ -39,4 +39,34 @@ private readonly IMapper _mapper;
      _context.SaveChanges();
      return Ok();
  }
+```  
+YAGNI -- В коде используются только методы необходимые для работы приложения.  
+S -- контроллер, использующийся только для работы с клиентами:  
+```
+public class ClientsController : Controller
+{
+        ...
+}
+```
+O -- OCP реализуется тем, что маппер может быть передан в любой класс.  
+L -- в конструктор контроллера может быть передан любой класс, реализующий интерфейс IMapper:  
+```
+        private readonly IMapper _mapper;
+
+        public ClientsController(MyDbContext context, IMapper mapper)
+        {
+            _context = context;
+            _mapper = mapper;
+        }
+```
+I -- ISP в коде данного приложенния не реализуется, так как нет подходящих классов, которые могли бы реализовывать несколько интерфейсов.  
+D -- DI реализуется так же, как и LSP, так как позволяет при необходимости добавить новый маппер, не изменяя логику контроллера:  
+```
+        private readonly IMapper _mapper;
+
+        public ClientsController(MyDbContext context, IMapper mapper)
+        {
+            _context = context;
+            _mapper = mapper;
+        }
 ```
